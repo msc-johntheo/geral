@@ -43,14 +43,20 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 def evaluate(individual):
     l = int("".join(str(i) for i in individual[:int(IND_SIZE/GENES)]), 2)    # gene quantidade de garrafas de leite
     s = int("".join(str(i) for i in individual[int(IND_SIZE/GENES):]), 2)    # gene quantidade de garrafas de suco
-    g = (5*l + 4.5*s)/7375                                                   # funcao objetivo normalizada [0,1]
-    h1 = max(0, (0.06*l + 0.05*s - 60)/15)                                   # funcao de restricao 1 normalizada [0,1]
-    h2 = max(0, (10*l + 20*s - 15000)/3750)                                  # funcao de restricao 2 normalizada [0,1]
-    h3 = max(0, (l - 800)/200)                                               # funcao de restricao 3 normalizada [0,1]
-    h4 = max(0, (s - 750)/187.5)                                             # funcao de restricao 4 normalizada [0,1]
-    return g - (h1+h2+h3+h4),                                                # fitness normalizado [0,1]
+    g = (5 * l + 4.5 * s) / 9718.5  # funcao objetivo normalizada [0,1]
+    h1 = max(0, ((6 * l + 5 * s) / 100 - 60)) / 52.53  # funcao de restricao 1 normalizada [0,1]
+    h2 = max(0, (10 * l + 20 * s - 15000)) / 15690  # funcao de restricao 2 normalizada [0,1]
+    h3 = max(0, (l - 800)) / 223  # funcao de restricao 3 normalizada [0,1]
+    h4 = max(0, (s - 750)) / 273  # funcao de restricao 4 normalizada [0,1]
+
+    #print_ind(individual)
+    #print('Fitness: ' + str(g - (h1+h2+h3+h4)))
+    #print('---------------------------------------')
+
+    return g - 2*(h1+h2+h3+h4)/4,                                                # fitness normalizado [0,1]
 
 # ----------
+
 # OPERADORES
 # ----------
 # registra funcao de fitness
@@ -80,7 +86,7 @@ def main():
     # CXPB - probabilidade de crossover
     # MUTPB - probabilidade de mutacao
     # NGEN - numero de geracoes
-    MU, LAMBDA_, CXPB, MUTPB, NGEN = 5, 7, 0.5, 0.02, 100
+    MU, LAMBDA_, CXPB, MUTPB, NGEN = 5, 7, 0.7, 0.2, 100
     #CXPB, MUTPB, NGEN = 0.5, 0.2, 200  # LUCR0 = 5138
 
     stats = tools.Statistics(key=lambda ind: ind.fitness.values)
@@ -111,9 +117,10 @@ def print_ind(individual):
     l = int("".join(str(i) for i in individual[:int(IND_SIZE / GENES)]), 2)  # gene quantidade de garrafas de leite
     s = int("".join(str(i) for i in individual[int(IND_SIZE / GENES):]), 2)  # gene quantidade de garrafas de suco
     g = 5*l + 4.5*s
+    print('Individuo:' + str(individual))
     print('Quantidade de garrafas de leite: ' + str(l))
     print('Quantidade de garrafas de suco: ' + str(s))
-    print('Lucro ótimo: ' + str(g))
+    print('Lucro: ' + str(g))
 
 
 def plot_log(logbook):
