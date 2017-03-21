@@ -44,11 +44,11 @@ def evaluate(individual):
     l = int("".join(str(i) for i in individual[:int(IND_SIZE/GENES)]), 2)    # gene quantidade de garrafas de leite
     s = int("".join(str(i) for i in individual[int(IND_SIZE/GENES):]), 2)    # gene quantidade de garrafas de suco
     g = (5*l + 4.5*s)/7375                                                   # funcao objetivo normalizada [0,1]
-    h1 = max(0, (0.06*l + 0.05*s - 60)/60)                                   # funcao de restricao 1 normalizada [0,1]
-    h2 = max(0, (10*l + 20*s - 15000)/15000)                                  # funcao de restricao 2 normalizada [0,1]
-    h3 = max(0, (l - 800)/800)                                               # funcao de restricao 3 normalizada [0,1]
-    h4 = max(0, (s - 750)/750)                                             # funcao de restricao 4 normalizada [0,1]
-    return g - (h1+h2+h3+h4)/4,                                                # fitness normalizado [0,1]
+    h1 = max(0, (0.06*l + 0.05*s - 60)/15)                                   # funcao de restricao 1 normalizada [0,1]
+    h2 = max(0, (10*l + 20*s - 15000)/3750)                                  # funcao de restricao 2 normalizada [0,1]
+    h3 = max(0, (l - 800)/200)                                               # funcao de restricao 3 normalizada [0,1]
+    h4 = max(0, (s - 750)/187.5)                                             # funcao de restricao 4 normalizada [0,1]
+    return g - (h1+h2+h3+h4),                                                # fitness normalizado [0,1]
 
 # ----------
 # OPERADORES
