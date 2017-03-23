@@ -138,7 +138,6 @@ def algorithm(initial_state, final_state, heuristic_method):
 
     # enquanto a fronteira nao estiver vazia
     while len(border) > 0:
-        print('.')
         generation += 1
 
         # ordenando para poder obter o melhor a cada iteração
@@ -159,9 +158,11 @@ def algorithm(initial_state, final_state, heuristic_method):
             # gerando os estados filhos e adicionado à fronteira
             add_to_border(generate_children(actual_state, sf, method), border)
 
+    result = []
+
     if found_solution:
         state = visited.pop()
-        result = []
+
         while state is not start_state:
             result.append(state)
             state = state.came_from
@@ -179,6 +180,7 @@ def algorithm(initial_state, final_state, heuristic_method):
     end_time = time.time()
     print('Tempo total: ' + str(end_time - start_time) +str(' segundos'))
     print('Geracoes: ' + str(generation))
+    print('Profundidade: ' + str(len(result)))
 
 
 def main():
@@ -190,7 +192,7 @@ def main():
                    3, 4, 5,
                    6, 7, 8]
 
-    heuristic_method = PIECES
+    heuristic_method = MANHATTAN
 
     algorithm(initial_state, final_state, heuristic_method)
 
