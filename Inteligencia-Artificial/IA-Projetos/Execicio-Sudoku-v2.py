@@ -1,5 +1,6 @@
 import random
 
+
 # retorna uma linha da matriz
 def sudoku_line(n, matrix_sudoku):
     return matrix_sudoku[n]
@@ -33,6 +34,22 @@ def sudoku_empty_spots(sudoku_matrix):
     return empty_spots
 
 
+# retorna uma lista com s spots vazios
+def sudoku_empty_spots_constraints(sudoku_matrix):
+    empty_spots = []
+    for i in range(9):
+        for j in range(9):
+            if sudoku_matrix[i][j] == 0:
+                constraint = 0
+                for n in range(1, 10):
+                    sudoku_matrix[i][j] = n
+                    if sudoku_check(sudoku_matrix):
+                        constraint += 1
+                empty_spots.append((i, j, constraint))
+                sudoku_matrix[i][j] = 0
+    return sorted(empty_spots, key=lambda spot: spot[2], reverse=False)
+
+
 # retorna um jogo de sudoku vazio. Utilizado para geração de filhos
 def sudoku_empty():
     result = []
@@ -62,8 +79,28 @@ def sudoku_duplicated(sudoku_list):
     return duplicated
 
 
+# verifica se a matrix gerada, tem algum spot sem opção numerica
+def sudoku_contraint_lock(sudoku_matrix):
+    for i in range(9):
+        for j in range(9):
+            constraint = 0
+            matrix = sudoku_copy(sudoku_matrix)
+            for n in range(1, 9):
+                matrix[i][j] = n
+                if sudoku_check(matrix):
+                    constraint += 1
+            if constraint == 0:
+                return False
+    return True
+
+
 # verifica se é valido -> sem duplicações
 def sudoku_valid(sudoku_matrix):
+    return sudoku_check(sudoku_matrix) and sudoku_contraint_lock(sudoku_matrix)
+
+
+# verifica se é valido -> sem duplicações
+def sudoku_check(sudoku_matrix):
     for n in range(9):
         if sudoku_duplicated(sudoku_line(n, sudoku_matrix)):
             return False
@@ -88,26 +125,30 @@ def sudoku_heuristic(sudoku_matrix):
                 temp_m = sudoku_copy(sudoku_matrix)
                 for x in range(9):
                     temp_m[i][j] = x
-                    if sudoku_valid(temp_m):
+                    if sudoku_check(temp_m):
                         possible_digits += 1
                 possible_digits_total += possible_digits / 9
-    #return possible_digits_total - (81 - spots_filled)
-    return 81 - spots_filled - possible_digits_total
-    #return possible_digits_total
+    # return possible_digits_total - (81 - spots_filled)
+    # return 81 - spots_filled - possible_digits_total
+    # return possible_digits_total
+    return possible_digits_total / (81 - spots_filled)
 
-#embaralha uma lista
+
+# embaralha uma lista
 def list_shuffle(orig):
     dest = orig[:]
     random.shuffle(dest)
     return dest
 
+
 # gera os filhos do estado atual somente com estados válidos
 def generate_children(k, sudoku_matrix):
-    empty_spots = sudoku_empty_spots(sudoku_matrix)
+    # empty_spots = sudoku_empty_spots(sudoku_matrix)
+    empty_spots = sudoku_empty_spots_constraints(sudoku_matrix)
     filled_spots = (81 - len(empty_spots))
-    nums = [1,2,3,4,5,6,7,8,9]
+    nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    empty_spots = list_shuffle(empty_spots)
+    # empty_spots = list_shuffle(empty_spots)
     nums = list_shuffle(nums)
     children = []
     for s in empty_spots:
@@ -124,15 +165,15 @@ def generate_children(k, sudoku_matrix):
 
 
 # Seleciona os k melhores membros da população
-def select(k,population):
-    sorted_population = sorted(population, key=lambda pop: pop[1], reverse=False)
+def select(k, population):
+    sorted_population = sorted(population, key=lambda pop: pop[1], reverse=True)
     return sorted_population[:k]
 
 
 # Funcao objetivo que verifica se todos os spots estao preenchidos
 def goal(population):
     for p in population:
-        if p[2] == 81: #todas os spots preenchidos
+        if p[2] == 81:  # todas os spots preenchidos
             return p
     return None
 
@@ -156,7 +197,7 @@ def info_population(population):
     avg = 0
     for p in population:
         avg += p[1]
-    avg = avg/len(population)
+    avg = avg / len(population)
     return population[0][1], population[len(population) - 1][1], avg, population[0][2]
 
 
@@ -167,6 +208,7 @@ def print_info_population(population):
     print('MIN: ' + str(info[1]))
     print('AVG: ' + str(info[2]))
     print('SPOTS: ' + str(info[3]))
+
 
 def beam_search():
     # posicao inicial
@@ -182,12 +224,12 @@ def beam_search():
         [3, 0, 2, 0, 0, 6, 0, 4, 7]]
 
     # tamanho do feixe
-    k = 70
+    k = 10
 
     # populacao inicial
     population = generate_children(k, initial)
 
-    #verifica se já alcancou o objetivo
+    # verifica se já alcancou o objetivo
     solution = goal(population)
     if solution is not None:
         return solution
@@ -200,13 +242,12 @@ def beam_search():
         for p in population:
             children += generate_children(k, p[0])
 
-        #condicional de maximo local
+        # condicional de maximo local
         if len(children) == 0:
             print('MAXIMO LOCAL - MELHOR SOLUCAO')
             best_solution = population[0][0]
             print_individual(best_solution)
             return best_solution
-
 
         # verifica se já alcançou o objetivo
         solution = goal(children)
@@ -220,7 +261,7 @@ def beam_search():
             print_individual(selected[0][0])
             population = selected
         generation += 1
-        print('============================================')
+        print('=======================')
 
 
 def test():
