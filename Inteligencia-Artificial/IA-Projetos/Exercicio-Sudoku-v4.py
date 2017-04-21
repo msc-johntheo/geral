@@ -1,3 +1,5 @@
+import random
+
 # definindo os elementos
 digits = '123456789'
 rows = 'ABCDEFGHI'
@@ -5,7 +7,7 @@ cols = digits
 
 
 def cross(A, B):
-    "Produto cruzado dos elementos de A e B"
+    "Funcao auxiliar para realizar o produto cruzado dos elementos de A e B"
     return [a + b for a in A for b in B]
 
 
@@ -99,11 +101,22 @@ def grid_fitnesss(sorted_values):
     return fitness
 
 
+# embaralha uma lista
+def list_shuffle(orig):
+    aux = []
+    for s in orig:
+        aux.append(s)
+    dest = aux[:]
+    random.shuffle(dest)
+    return dest
+
+
 def generate_children(individual, k):
     """gera os k filhos de um indivíduo"""
     children = []
     possibles = sort_grid(individual)
     for key, values in possibles.items():
+        values = list_shuffle(values)
         for v in values:
             child = individual.copy()
             child[key] = v
@@ -115,7 +128,7 @@ def generate_children(individual, k):
             if k == 0:
                 return children
 
-    return children
+    return []
 
 
 def display(values):
@@ -142,25 +155,31 @@ def beam_search(state, k):
         display(initial_values)
         return
     else:
+        print('POSSIBILIDADES INICIAIS:')
+        display(initial_values)
         population = [initial_values]
-        children = []
         generation = 1
         while len(population):
+            children = []
             print('Generation: {}'.format(generation))
             for p in population:
                 children += generate_children(p, k)
                 children = sorted(children, key=lambda child: grid_fitnesss(child))
-            if grid_fitnesss(children[0]) == 0:
-                display(children[0])
-                return
+            if len(children):
+                if grid_fitnesss(children[0]) == 0:
+                    display(children[0])
+                    return (children[0],k,)
+                else:
+                    population = children[:k]
+                    display(children[0])
+                    generation += 1
             else:
-                population = children[:k]
-                display(children[0])
-                generation += 1
-                print('--------------------')
+                print('NAO CONVERGIU')
+                return
 
 
 def main():
+    random.seed(32)
     initial = """
     8 3 . |1 . . |6 . 5
     . . . |. . . |. 8 . 
@@ -187,9 +206,11 @@ def main():
     . . . |. . . |. . . 
     3 . . |. . 6 |. 4 7 
         """
+    initial3 = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
+    initial4 = "......4.18..2........6.7......8...6..4....3...1.......6......2..5..1....7...3...."
     k = 3
 
-    beam_search(initial2, k)
+    beam_search(initial, k)
 
 
 if __name__ == "__main__":

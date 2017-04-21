@@ -199,7 +199,7 @@ def beam_search():
     #    [3, 0, 2, 0, 0, 6, 0, 4, 7]]
 
     # tamanho do feixe
-    k = 400
+    k = 30
 
     # populacao inicial
     population = generate_children(k, initial)
