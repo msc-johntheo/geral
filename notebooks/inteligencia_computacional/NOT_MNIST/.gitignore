@@ -1,0 +1,13 @@
+# Jupyter
+.ipynb_checkpoints/
+
+# Cache
+__pycache__/
+
+# Tensorboard data
+graph-tensorboard/
+
+#Generated dataset
+notMNIST_large/
+notMNIST_small/
+notMNIST.pickle
