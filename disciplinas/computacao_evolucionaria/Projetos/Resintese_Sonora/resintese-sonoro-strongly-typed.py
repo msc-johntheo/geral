@@ -20,9 +20,9 @@ import thinkdsp
 import thinkplot
 
 # Multi-processing
-import multiprocessing
-import scoop
-from scoop import futures
+#import multiprocessing
+#import scoop
+#from scoop import futures
 
 # DADOS INICIAIS
 wave = thinkdsp.read_wave('sounds/92002__jcveliz__violin-origional.wav')
@@ -109,8 +109,8 @@ pset.addPrimitive(amp, [float], float)
 # pset.addPrimitive(gen_cos, [float,float], list)
 
 # TERMINALS
-# if not scoop.IS_ORIGIN:
-#    pset.addEphemeralConstant("rand100", lambda: random.random() * 100, float)
+#if not scoop.IS_ORIGIN:
+#   pset.addEphemeralConstant("rand100", lambda: random.random() * 100, float)
 pset.addEphemeralConstant("rand100", lambda: random.random() * 100, float)
 pset.addTerminal(gen_sin(f0), list)
 pset.addTerminal(gen_sin(2 * f0), list)
